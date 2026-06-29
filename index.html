@@ -32,7 +32,8 @@ nav .logo{font-weight:700;font-size:16px;color:var(--accent);font-family:var(--f
 nav .links{display:flex;gap:8px;flex-wrap:wrap}
 nav .links a{color:var(--text2);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .2s}
 nav .links a:hover{color:var(--text);background:rgba(110,193,228,.08)}
-.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
+.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:8px;border-radius:8px}
+.nav-toggle:hover{background:rgba(255,255,255,.05)}
 
 /* Hero */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
@@ -77,7 +78,6 @@ section .sub{color:var(--text2);font-size:16px;max-width:700px;margin-bottom:48p
 .comp-table th{padding:14px 16px;text-align:left;font-family:var(--font);font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border)}
 .comp-table td{padding:12px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text2)}
 .comp-table td:first-child{color:var(--text);font-weight:500}
-.comp-table td:last-child{text-align:center;font-size:18px}
 .comp-table .yes{color:var(--green)}
 .comp-table .no{color:var(--red)}
 .comp-table .partial{color:var(--orange)}
@@ -105,8 +105,9 @@ section .sub{color:var(--text2);font-size:16px;max-width:700px;margin-bottom:48p
 .tl-item .tl-desc{font-size:13px;color:var(--text2)}
 
 /* Highlight bar */
-.highlight-bar{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:24px;margin:40px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.highlight-bar .big{font-size:28px;font-weight:800;color:var(--accent)}
+.highlight-bar{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.highlight-bar + .highlight-bar{margin-top:12px}
+.highlight-bar .big{font-size:28px;font-weight:800;color:var(--accent);flex-shrink:0}
 .highlight-bar p{font-size:14px;color:var(--text2);flex:1}
 
 /* Divider */
@@ -117,7 +118,7 @@ footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);ma
 footer p{color:var(--text2);font-size:12px;font-family:var(--font)}
 footer a{color:var(--accent);text-decoration:none}
 
-/* Testimonial / Quote */
+/* Quote block */
 .quote-block{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:32px;margin:24px 0;position:relative}
 .quote-block::before{content:'"';font-size:48px;color:var(--accent);opacity:.3;position:absolute;top:16px;left:20px;font-family:serif}
 .quote-block p{font-size:15px;font-style:italic;color:var(--text);padding-left:24px}
@@ -139,6 +140,7 @@ footer a{color:var(--accent);text-decoration:none}
   section{padding:60px 16px}
   .comp-table{font-size:11px}
   .comp-table th,.comp-table td{padding:10px 8px}
+  .highlight-bar{flex-direction:column;text-align:center}
 }
 
 /* Alternating section bg */
@@ -157,20 +159,27 @@ section.bg-alt .inner{max-width:1100px;margin:0 auto}
 .skill-tag{padding:5px 14px;border-radius:100px;font-size:11px;font-family:var(--font);font-weight:500;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text2);transition:all .2s}
 .skill-tag:hover{border-color:var(--accent);color:var(--accent);background:rgba(110,193,228,.04);transform:translateY(-1px)}
 
-/* A */
-a{color:var(--accent)}
+/* Tag badge */
+.tag{display:inline-block;padding:2px 10px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-family:var(--font);margin-left:6px;vertical-align:middle}
+.tag.best{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.tag.good{background:rgba(110,193,228,.12);color:var(--accent);border:1px solid rgba(110,193,228,.2)}
+.tag.fast{background:rgba(251,191,36,.1);color:var(--orange);border:1px solid rgba(251,191,36,.2)}
+.tag.light{background:rgba(167,139,250,.12);color:var(--accent2);border:1px solid rgba(167,139,250,.2)}
+
+/* Inline code */
+code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent);font-family:var(--font)}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">~/hermes</div>
-  <button class="nav-toggle" onclick="document.querySelector('.links').classList.toggle('open')">☰</button>
+  <button class="nav-toggle" aria-label="Menu">☰</button>
   <div class="links">
     <a href="#motivation">Why Local</a>
     <a href="#agent">AI vs Agent</a>
     <a href="#comparison">Comparison</a>
-    <a href="#management">Management</a>
+    <a href="#models">Models</a>
     <a href="#applications">Applications</a>
     <a href="#skills">Skills</a>
     <a href="#start">Get Started</a>
@@ -262,16 +271,16 @@ a{color:var(--accent)}
   <div class="table-wrapper">
     <table class="comp-table">
       <thead>
-        <tr><th>Dimension</th><th>Local (Hermes + Ollama)</th><th>Cloud API (OpenAI/Anthropic)</th><th>GitHub Copilot</th></tr>
+        <tr><th>Dimension</th><th>Local (Hermes + Local Model)</th><th>Cloud API (OpenAI/Anthropic)</th><th>GitHub Copilot</th></tr>
       </thead>
       <tbody>
         <tr><td>Data Privacy</td><td>✅ <span class="yes">Your data, your hardware</span></td><td>❌ <span class="no">Sent to third-party servers</span></td><td>⚠️ <span class="partial">Code sent to Microsoft/GitHub</span></td></tr>
         <tr><td>Offline</td><td>✅ <span class="yes">Full offline capability</span></td><td>❌ <span class="no">Requires internet</span></td><td>⚠️ <span class="partial">Limited cache mode</span></td></tr>
-        <tr><td>Cost Model</td><td>✅ <span class="yes">One-time hardware</span></td><td>⚠️ <span class="partial">Per-token billing</span></td><td>⚠️ <span class="partial">Monthly subscription + usage limits</span></td></tr>
+        <tr><td>Cost Model</td><td>✅ <span class="yes">One-time hardware</span></td><td>⚠️ <span class="partial">Per-token billing (~$0.15/M tok)</span></td><td>⚠️ <span class="partial">$19-39/user/month + API limits</span></td></tr>
         <tr><td>Full Oversight</td><td>✅ <span class="yes">Complete audit trail</span></td><td>❌ <span class="no">Limited logging</span></td><td>❌ <span class="no">Minimal transparency</span></td></tr>
         <tr><td>Tool Access</td><td>✅ <span class="yes">Terminal, files, web, GitHub, Cloudflare, cron</span></td><td>⚠️ <span class="partial">Function calling only</span></td><td>❌ <span class="no">IDE only</span></td></tr>
         <tr><td>Model Choice</td><td>✅ <span class="yes">Any model, any time</span></td><td>⚠️ <span class="partial">Provider-dependent</span></td><td>❌ <span class="no">Locked to their model</span></td></tr>
-        <tr><td>Latency</td><td>⚠️ <span class="partial">Hardware-dependent (~8-35 tok/s)</span></td><td>✅ <span class="yes">Fast, server-grade</span></td><td>✅ <span class="yes">Fast, inline</span></td></tr>
+        <tr><td>Latency</td><td>⚠️ <span class="partial">Hardware-dependent (5-160 tok/s)</span></td><td>✅ <span class="yes">Fast, server-grade</span></td><td>✅ <span class="yes">Fast, inline</span></td></tr>
       </tbody>
     </table>
   </div>
@@ -283,10 +292,79 @@ a{color:var(--accent)}
 
 <div class="section-divider"></div>
 
+<!-- ============ MODELS ============ -->
+<section id="models">
+  <span class="section-label">Part IV — The Models</span>
+  <h2>Which Models <span>to Run</span></h2>
+  <p class="sub">The full local AI stack includes a primary model for heavy lifting and a fleet of smaller models for speed-critical tasks — all running on the same hardware.</p>
+
+  <div class="callout info">
+    <strong>🎯 Model routing is the secret:</strong> Route quick edits and simple queries to a tiny 3B model that responds in milliseconds. Route complex reasoning, code review, and multi-step tasks to a larger model. Hermes handles the routing automatically.
+  </div>
+
+  <div class="table-wrapper" style="margin-bottom:32px">
+    <table class="comp-table">
+      <thead>
+        <tr><th>Model</th><th>Size</th><th>VRAM</th><th>Speed</th><th>Best For</th><th>License</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>MiniMax M3 <span class="tag best">lead</span></td><td>428B MoE (23B active)</td><td>~220 GB (Q4)</td><td>~4-14 tok/s</td><td>Complex reasoning, 1M context, SWE-Bench 59%</td><td>MiniMax License</td></tr>
+        <tr><td>Gemma 4 31B <span class="tag good">lead</span></td><td>30.7B</td><td>17.5 GB</td><td>~20-35 tok/s</td><td>Heavy reasoning, MMLU 85.2%, Codeforces 2150 ELO</td><td>Apache 2.0</td></tr>
+        <tr><td>Gemma 4 26B A4B <span class="tag good">secondary</span></td><td>25.2B (4B active MoE)</td><td>14.4 GB</td><td>~35-50 tok/s</td><td>Code generation, reasoning, agent fallback</td><td>Apache 2.0</td></tr>
+        <tr><td>Qwen 3.5 32B</td><td>32B</td><td>18 GB</td><td>~25-40 tok/s</td><td>Strong coding alternative, tool use</td><td>Qwen License</td></tr>
+        <tr><td>Gemma 4 12B <span class="tag good">RAG</span></td><td>11.95B</td><td>6.7 GB</td><td>~45-65 tok/s</td><td>Document analysis, embedded vision, RAG</td><td>Apache 2.0</td></tr>
+        <tr><td>Gemma 4 E4B <span class="tag fast">fast</span></td><td>4.5B active</td><td>4.5 GB</td><td>~70-100 tok/s</td><td>Simple chat, summarization, classification</td><td>Apache 2.0</td></tr>
+        <tr><td>Gemma 4 E2B <span class="tag fast">fast</span></td><td>2.3B active</td><td>2.9 GB</td><td>~100-150 tok/s</td><td>Quick edits, git ops, file search, typo fixing</td><td>Apache 2.0</td></tr>
+        <tr><td>Llama 3.2 3B <span class="tag fast">ultra</span></td><td>3B</td><td>2.2 GB</td><td>~120-160 tok/s</td><td>Ultra-fast fallback, always hot</td><td>Llama 3.2 Community</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="font-size:15px;margin-bottom:16px;color:var(--text2)">Recommended Fleets by Hardware</h3>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon" style="background:rgba(110,193,228,.12)">💻</div>
+      <h3>24 GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(RTX 3090/4090)</span></h3>
+      <p><strong style="color:var(--accent)">Lead:</strong> Gemma 4 12B</p>
+      <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 E4B (4.5B)</p>
+      <p><strong style="color:var(--accent)">Ultra:</strong> Llama 3.2 3B</p>
+      <p style="margin-top:8px;font-size:12px">Covers 85% of daily use. No additional GPU needed.</p>
+    </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(52,211,153,.12)">🖥️</div>
+      <h3>48 GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(2× RTX 3090 / A6000)</span></h3>
+      <p><strong style="color:var(--accent)">Lead:</strong> Gemma 4 31B or MiniMax M3 (Q2)</p>
+      <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 12B</p>
+      <p><strong style="color:var(--accent)">Ultra:</strong> Llama 3.2 3B</p>
+      <p style="margin-top:8px;font-size:12px">Full reasoning + high-speed routing in one box.</p>
+    </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(251,191,36,.12)">🏢</div>
+      <h3>96+ GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(4× GPU / A100)</span></h3>
+      <p><strong style="color:var(--accent)">Lead:</strong> MiniMax M3 (Q4_K_M)</p>
+      <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 26B A4B</p>
+      <p><strong style="color:var(--accent)">Local:</strong> Gemma 4 31B (always-on)</p>
+      <p style="margin-top:8px;font-size:12px">Multi-user, 1M context, enterprise throughput.</p>
+    </div>
+  </div>
+
+  <div class="highlight-bar" style="margin-top:28px">
+    <span class="big">🧠</span>
+    <p><strong>Skills amplify cheap models.</strong> A well-crafted skill turns a tiny 3B model into a domain expert. Hermes crams task-specific instructions, guardrails, and structured prompts into a skill — so even a <strong>$0 hardware</strong> model like Gemma 4 E2B can perform at the level of a much larger model for that specific task. <strong>The skill, not the model size, determines output quality.</strong></p>
+  </div>
+
+  <div class="callout success">
+    <strong>✅ Bottom line:</strong> You don't need a 428B model to run Hermes effectively. A <strong>Gemma 4 31B + E4B</strong> combo costs $0 in additional hardware if you have a 24 GB RTX 4090, and covers 95% of what an engineering firm needs. Add M3 when you need 1M context or multi-user serving. The secret isn't the biggest model — it's the <strong>right model for each task</strong>.
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- ============ MANAGEMENT ============ -->
 <section id="management" class="bg-alt">
   <div class="inner">
-    <span class="section-label">Part IV — For Leadership</span>
+    <span class="section-label">Part V — For Leadership</span>
     <h2>What Management <span>Needs to Know</span></h2>
     <p class="sub">AI adoption without oversight is a liability. Here is how Hermes gives leadership full visibility and control.</p>
 
@@ -321,9 +399,9 @@ a{color:var(--accent)}
 
 <!-- ============ APPLICATIONS ============ -->
 <section id="applications">
-  <span class="section-label">Part V — In Practice</span>
-  <h2>What It Actually <span>Looks Like</span></h2>
-  <p class="sub">Real workflows that Hermes handles autonomously — all triggered from a single message.</p>
+  <span class="section-label">Part VI — In Practice</span>
+  <h2>Beyond Software: What It <span>Actually Does</span></h2>
+  <p class="sub">Hermes isn't just a coding tool. It automates anything that can be described, scripted, or API-driven — faster than a human can do it manually.</p>
 
   <div class="card-grid">
     <div class="card">
@@ -333,19 +411,44 @@ a{color:var(--accent)}
     </div>
     <div class="card">
       <div class="icon" style="background:rgba(52,211,153,.12)">📦</div>
-      <h3>GitHub Administration</h3>
-      <p>"Push this new feature branch, create a PR, and deploy the preview." Full git lifecycle: commit, push, pull request, merge — all from a Telegram message.</p>
+      <h3>GitHub & Version Control</h3>
+      <p>Full git lifecycle: commit, push, pull request, merge, tag releases, deploy previews. All from a single Telegram message — no terminal needed.</p>
     </div>
     <div class="card">
       <div class="icon" style="background:rgba(251,191,36,.12)">📱</div>
-      <h3>Full-Stack Development From Your Phone</h3>
-      <p>Build a complete web app start-to-finish without opening a terminal. Hermes creates the project, writes the code, runs the tests, pushes to GitHub, deploys to production — all via Telegram from your phone.</p>
+      <h3>Full-Stack Development From Phone</h3>
+      <p>Build a complete web app start-to-finish without opening a terminal. Hermes creates the project, writes the code, runs tests, pushes to GitHub, deploys to production — all via Telegram from your phone.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(167,139,250,.12)">🔁</div>
-      <h3>Version Control & Production Pushes</h3>
-      <p>"Commit these changes, tag a release, and deploy." Hermes handles the full CI chain: versioning, changelogs, builds, and deployment to Cloudflare or Netlify.</p>
+      <div class="icon" style="background:rgba(167,139,250,.12)">📊</div>
+      <h3>Excel Automation & Data Work</h3>
+      <p>"Search this Excel file for all entries from last quarter and generate a summary report." Hermes opens the file, filters, processes, and delivers the result — on a cron schedule if needed.</p>
     </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(110,193,228,.12)">🔌</div>
+      <h3>API Integration (Fast)</h3>
+      <p>Hermes interacts with any application that has an API — CRMs, ERPs, monitoring tools, firmware interfaces — <strong>faster than a human</strong> because it reads the API docs, constructs the calls, and processes responses in real-time.</p>
+    </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(52,211,153,.12)">📄</div>
+      <h3>Documentation & Datasheets</h3>
+      <p>"Read this hardware datasheet and tell me the pinout for the SPI interface." Hermes ingests PDFs, datasheets, code documentation, and technical specs — and answers questions about them instantly.</p>
+    </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(251,191,36,.12)">🎯</div>
+      <h3>Project Documentation Mastery</h3>
+      <p>Hermes can absorb all documentation for an ongoing project — codebases, hardware specs, design files — and answer questions about any part of it without being told what to look at. Onboarding a new engineer? The agent already knows the project.</p>
+    </div>
+    <div class="card">
+      <div class="icon" style="background:rgba(167,139,250,.12)">📋</div>
+      <h3>Pitch Decks & Reports</h3>
+      <p>This entire pitch deck was built by Hermes — from structure to design to deployment. Reports, proposals, documentation, slide decks — all generated autonomously in your brand style.</p>
+    </div>
+  </div>
+
+  <div class="highlight-bar">
+    <span class="big">⚡</span>
+    <p><strong>APIs make everything faster.</strong> Whether it's a CRM, a cloud provider, a monitoring dashboard, or firmware — if it has an API, Hermes can interact with it at machine speed. What takes a human 10 minutes of clicking through dashboards takes Hermes <strong>under a second</strong>.</p>
   </div>
 
   <div class="highlight-bar">
@@ -354,8 +457,8 @@ a{color:var(--accent)}
   </div>
 
   <div class="highlight-bar">
-    <span class="big">⚡</span>
-    <p><strong>Production in one message.</strong> "Deploy the latest build with the staging config behind a Cloudflare tunnel with password auth." One sentence → deployed and verified.</p>
+    <span class="big">⏰</span>
+    <p><strong>Scheduled automation.</strong> Cron jobs let Hermes run tasks on a schedule — "email me the inventory report every Monday at 9 AM" or "check this API endpoint every hour and alert if it's down."</p>
   </div>
 </section>
 
@@ -364,9 +467,9 @@ a{color:var(--accent)}
 <!-- ============ SKILLS ============ -->
 <section id="skills" class="bg-alt">
   <div class="inner">
-    <span class="section-label">Part VI — Continuous Improvement</span>
+    <span class="section-label">Part VII — Continuous Improvement</span>
     <h2>The Skills System — <span>Getting Better Over Time</span></h2>
-    <p class="sub">Hermes doesn't just follow instructions — it remembers how you work and encodes that into reusable skills.</p>
+    <p class="sub">Hermes doesn't just follow instructions — it remembers how you work and encodes that into reusable skills. Each skill makes cheap models perform like expensive ones.</p>
 
     <div class="card-grid">
       <div class="card">
@@ -384,6 +487,11 @@ a{color:var(--accent)}
         <h3>Learn Once, Use Forever</h3>
         <p>First time doing something: Hermes figures it out. Second time: it loads the saved skill. Third time: it runs autonomously. Repetitive workflows disappear.</p>
       </div>
+      <div class="card">
+        <div class="icon" style="background:rgba(167,139,250,.12)">💡</div>
+        <h3>Skills Amplify Cheap Models</h3>
+        <p>A well-written skill packs domain knowledge, edge cases, and structured output rules into the prompt context. This lets a <strong>3B model perform like a 30B+ model</strong> on that specific task — because the skill does the heavy thinking, the model just executes.</p>
+      </div>
     </div>
 
     <div class="callout success">
@@ -396,13 +504,13 @@ a{color:var(--accent)}
       <span class="skill-tag">opencode-coding-agent</span>
       <span class="skill-tag">investigative-research-methods</span>
       <span class="skill-tag">research-document-generation</span>
+      <span class="skill-tag">audio-narration-production</span>
       <span class="skill-tag">hermes-setup-maintenance</span>
+      <span class="skill-tag">web-dev-design-resources</span>
     </div>
 
-    <p style="color:var(--text2);font-size:13px;margin-top:16px">Each skill captures the exact steps, commands, and pitfalls for a recurring task. Loading a skill is equivalent to having done it before — even if it's your first time.</p>
-
-    <div class="quote-block" style="margin-top:32px">
-      <p>Every time we complete a complex task — a deployment, a research report, a security audit — we save it as a skill. Next time, it's one command. The system compounds.</p>
+    <div class="quote-block" style="margin-top:28px">
+      <p>Every time we complete a complex task — a deployment, a research report, a security audit — we save it as a skill. Next time, it's one command. The system compounds. A 3B model with a good skill beats a 70B model without one.</p>
     </div>
   </div>
 </section>
@@ -411,15 +519,15 @@ a{color:var(--accent)}
 
 <!-- ============ META — THIS DECK ============ -->
 <section id="meta">
-  <span class="section-label">Part VII — Proof</span>
+  <span class="section-label">Part VIII — Proof</span>
   <h2>This Pitch Deck Was <span>Built by Hermes</span></h2>
-  <p class="sub">Every slide you are reading. Every animation. Every layout choice. All produced autonomously from a single instruction.</p>
+  <p class="sub">Every slide you are reading. Every animation. Every layout choice. All produced autonomously from a single instruction — and deployed in the same message.</p>
 
   <div class="card-grid">
     <div class="card">
       <div class="icon" style="background:rgba(110,193,228,.12)">🎨</div>
       <h3>Designed From a Skill</h3>
-      <p>The <code style="color:var(--accent)">standalone-html-deliverables</code> skill contains the full design system — NILT Navy palette, glass-morphism cards, hero orbs, responsive grid. One load, instant brand-consistent output.</p>
+      <p>The <code>standalone-html-deliverables</code> skill contains the full design system — NILT Navy palette, glass-morphism cards, hero orbs, responsive grid. One load, instant brand-consistent output.</p>
     </div>
     <div class="card">
       <div class="icon" style="background:rgba(52,211,153,.12)">📝</div>
@@ -439,7 +547,12 @@ a{color:var(--accent)}
   </div>
 
   <div class="callout info">
-    <strong>🤖 The full chain:</strong> User sends "build a pitch deck about local AI for engineering firms" → Hermes loads the design skill → pulls relevant context from memory → generates a 10-section HTML deck with full CSS layout → saves the approach as a new skill → deploys to GitHub and Netlify → delivers the link. All autonomous.
+    <strong>🤖 The full chain:</strong> User sends "build a pitch deck about local AI for engineering firms" → Hermes loads the design skill → pulls relevant context from memory → generates a full HTML deck with CSS layout → saves the approach as a new skill → deploys to GitHub and Netlify → delivers the link. All autonomous.
+  </div>
+
+  <div class="highlight-bar">
+    <span class="big">🎯</span>
+    <p><strong>This is not a demo of what Hermes <em>could</em> do. It's what Hermes <em>just did</em> — while you read this sentence.</strong></p>
   </div>
 </section>
 
@@ -447,25 +560,26 @@ a{color:var(--accent)}
 
 <!-- ============ HARDWARE ============ -->
 <section id="hardware">
-  <span class="section-label">Part VIII — Requirements</span>
+  <span class="section-label">Part IX — Requirements</span>
   <h2>What You <span>Need to Run It</span></h2>
-  <p class="sub">Hermes itself runs on modest hardware. The model determines the GPU requirement.</p>
+  <p class="sub">Hermes itself runs on modest hardware — the model determines the GPU requirement. Start with what you have.</p>
 
   <div class="table-wrapper">
     <table class="comp-table">
       <thead>
-        <tr><th>Tier</th><th>Hardware</th><th>Models</th><th>Best For</th></tr>
+        <tr><th>Tier</th><th>Hardware</th><th>Primary Model</th><th>Best For</th></tr>
       </thead>
       <tbody>
-        <tr><td>Development</td><td>24 GB VRAM (RTX 3090/4090)</td><td>7B–14B (Llama 3, Qwen 2.5, Mistral)</td><td>Individual engineers, daily coding</td></tr>
-        <tr><td>Production</td><td>48 GB VRAM (2× RTX 3090 / A6000)</td><td>32B–70B (DeepSeek, Llama 3, Qwen 2.5)</td><td>Small teams, document analysis</td></tr>
-        <tr><td>Enterprise</td><td>2× A100 80GB / 4× RTX 6000</td><td>120B+ (Mixtral, Llama 3 70B, LLM 2 90B)</td><td>Multi-user, 24/7, high-throughput</td></tr>
+        <tr><td>Individual</td><td>24 GB VRAM (RTX 3090/4090)</td><td>Gemma 4 12B + E4B</td><td>Single engineer, daily coding, document analysis</td></tr>
+        <tr><td>Team</td><td>48 GB VRAM (2× RTX 3090 / A6000)</td><td>Gemma 4 31B or M3 Q2</td><td>Small teams, heavy reasoning, multi-user</td></tr>
+        <tr><td>Enterprise</td><td>96+ GB VRAM (4× GPU / A100)</td><td>MiniMax M3 Q4 + Gemma 4 31B</td><td>Multi-user, 1M context, 24/7 API serving</td></tr>
+        <tr><td>Servers</td><td>No GPU needed (CPU-only)</td><td>Gemma 4 E2B / Llama 3.2 3B</td><td>Quick edits, git ops, automation via skills</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="callout info">
-    <strong>💡 Start small, scale up:</strong> Hermes works with any model — including cloud APIs as a fallback. Start with a 7B model on existing hardware, add GPU capacity as adoption grows. The software doesn't change.
+    <strong>💡 Start small, scale up:</strong> Run Gemma 4 E4B on existing hardware today. Add GPU capacity as adoption grows. The software doesn't change — only the model name in config.yaml.
   </div>
 </section>
 
@@ -474,7 +588,7 @@ a{color:var(--accent)}
 <!-- ============ GET STARTED ============ -->
 <section id="start" class="bg-alt">
   <div class="inner" style="text-align:center;padding:40px 0">
-    <span class="section-label">Part IX — Next Steps</span>
+    <span class="section-label">Part X — Next Steps</span>
     <h2>From Zero to <span>Production</span></h2>
     <p class="sub" style="margin:12px auto 48px">One afternoon. One machine. Full local AI capability for your engineering team.</p>
 
@@ -490,14 +604,14 @@ a{color:var(--accent)}
         <div class="num">2</div>
         <div class="content">
           <h4>Pull a local model</h4>
-          <p>Ollama or vLLM — whichever fits your hardware. Configure Hermes to use it.</p>
+          <p>Ollama or vLLM — pull Gemma 4 12B or Llama 3.2 3B to start. Configure Hermes to use it.</p>
         </div>
       </div>
       <div class="num-item">
         <div class="num">3</div>
         <div class="content">
           <h4>Connect your tools</h4>
-          <p>GitHub, Cloudflare, Telegram, Discord — the integrations that match your workflow.</p>
+          <p>GitHub, Cloudflare, Telegram, Discord, Excel, APIs — the integrations that match your workflow.</p>
         </div>
       </div>
       <div class="num-item">
@@ -512,7 +626,7 @@ a{color:var(--accent)}
     <div style="margin-top:48px">
       <a href="https://hermes-agent.nousresearch.com" target="_blank" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;transition:all .2s">Explore Hermes Agent →</a>
     </div>
-    <p style="color:var(--text2);font-size:12px;margin-top:12px;font-family:var(--font)">Open source · MIT license · Nous Research</p>
+    <p style="color:var(--text2);font-size:12px;margin-top:12px;font-family:var(--font)">Open source · MIT license · Nous Research · <a href="https://ai.basednode.xyz/hermesNILT" target="_blank" style="color:var(--accent)">Full setup guide →</a></p>
   </div>
 </section>
 
@@ -521,8 +635,27 @@ a{color:var(--accent)}
 </footer>
 
 <script>
-document.querySelector('.nav-toggle').addEventListener('click',function(){document.querySelector('.links').classList.toggle('open')});
-document.querySelectorAll('.links a').forEach(function(a){a.addEventListener('click',function(){document.querySelector('.links').classList.remove('open')})});
+(function(){
+  var toggle = document.querySelector('.nav-toggle');
+  var links = document.querySelector('.links');
+  if(toggle && links){
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      links.classList.toggle('open');
+    });
+    document.querySelectorAll('.links a').forEach(function(a){
+      a.addEventListener('click', function(){
+        links.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', function(e){
+      var nav = document.querySelector('nav');
+      if(nav && !nav.contains(e.target)){
+        links.classList.remove('open');
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>
