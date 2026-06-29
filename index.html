@@ -5,113 +5,293 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Local AI for Engineering Firms — Hermes Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <style>
 :root {
-  --bg: #0d0d30;
-  --bg2: #001a3f;
-  --bg3: #161655;
-  --border: #1e3a5f;
-  --text: #e3e6eb;
-  --text2: #b0c4d8;
+  --bg: #0b0b20;
+  --bg2: #0f0f2a;
+  --bg3: #14143a;
+  --border: #1e1e50;
+  --text: #e8e8f0;
+  --text2: #9090b8;
   --accent: #6ec1e4;
-  --accent2: #087bc5;
+  --accent2: #4a8fd0;
   --green: #34d399;
   --orange: #fbbf24;
   --red: #f87171;
+  --purple: #a78bfa;
   --font: 'JetBrains Mono','SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
-  --font-body: 'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-body: 'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --font-display: 'DM Serif Display',Georgia,serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:80px}
-body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;overflow-x:hidden}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--font-body);line-height:1.6;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(rgba(110,193,228,.04) 1px,transparent 1px);
+  background-size:32px 32px;
+  min-height:100vh;
+}
+
+/* Grain texture */
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  opacity:.2;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px 256px;
+}
 
 /* Nav */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,13,48,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between}
-nav .logo{font-weight:700;font-size:16px;color:var(--accent);font-family:var(--font);letter-spacing:-.5px}
-nav .links{display:flex;gap:8px;flex-wrap:wrap}
-nav .links a{color:var(--text2);text-decoration:none;font-size:12px;font-weight:500;padding:6px 12px;border-radius:8px;transition:all .2s}
-nav .links a:hover{color:var(--text);background:rgba(110,193,228,.08)}
-.nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:24px;cursor:pointer;padding:8px;border-radius:8px}
-.nav-toggle:hover{background:rgba(255,255,255,.05)}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(11,11,32,.88);
+  backdrop-filter:blur(20px) saturate(1.4);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;height:64px;
+  display:flex;align-items:center;justify-content:space-between
+}
+nav .logo{
+  font-weight:800;font-size:15px;color:var(--accent);
+  font-family:var(--font);letter-spacing:-.5px;
+  display:flex;align-items:center;gap:8px
+}
+nav .logo i{font-size:20px;color:var(--accent)}
+nav .links{display:flex;gap:4px;flex-wrap:wrap}
+nav .links a{
+  color:var(--text2);text-decoration:none;
+  font-size:12px;font-weight:500;
+  padding:6px 12px;border-radius:8px;
+  transition:all .2s;position:relative
+}
+nav .links a:hover{color:var(--text);background:rgba(110,193,228,.06)}
+nav .links a::after{
+  content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);
+  width:0;height:2px;border-radius:2px;
+  background:var(--accent);transition:width .2s
+}
+nav .links a:hover::after{width:20px}
+.nav-toggle{
+  display:none;background:none;border:none;color:var(--text2);
+  font-size:24px;cursor:pointer;padding:8px;border-radius:8px;
+  transition:all .2s
+}
+.nav-toggle:hover{color:var(--text);background:rgba(255,255,255,.04)}
 
 /* Hero */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.hero-bg .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.12}
-.hero-bg .orb:nth-child(1){width:500px;height:500px;background:var(--accent);top:-15%;left:-10%;animation:orbFloat 12s ease-in-out infinite}
-.hero-bg .orb:nth-child(2){width:400px;height:400px;background:var(--accent2);bottom:-10%;right:-8%;animation:orbFloat 15s ease-in-out infinite 2s}
-@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-40px) scale(1.1)}66%{transform:translate(-20px,20px) scale(.95)}}
-.hero h1{font-size:clamp(32px,5vw,60px);font-weight:800;line-height:1.1;max-width:900px;position:relative;z-index:1}
-.hero h1 span{background:linear-gradient(135deg,var(--accent),#4a9eff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:clamp(16px,2vw,22px);color:var(--text2);max-width:700px;margin-top:20px;position:relative;z-index:1}
-.hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;justify-content:center;position:relative;z-index:1}
-.hero-badges span{padding:6px 16px;border-radius:100px;font-size:11px;font-weight:600;font-family:var(--font);text-transform:uppercase;letter-spacing:.5px;border:1px solid var(--border);background:rgba(255,255,255,.02)}
-.hero-badges .live{border-color:rgba(52,211,153,.3);color:var(--green);background:rgba(52,211,153,.06)}
-.hero-badges .agent{border-color:rgba(110,193,228,.3);color:var(--accent);background:rgba(110,193,228,.06)}
-.hero-badges .phone{border-color:rgba(251,191,36,.3);color:var(--orange);background:rgba(251,191,36,.06)}
-.hero .scroll-down{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:var(--text2);font-size:11px;font-family:var(--font);text-transform:uppercase;letter-spacing:2px;animation:bounce 2s infinite;cursor:pointer;z-index:1}
-@keyframes bounce{0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-8px)}60%{transform:translateX(-50%) translateY(-4px)}}
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:120px 24px 80px;position:relative;overflow:hidden
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden
+}
+.hero-bg .orb{
+  position:absolute;border-radius:50%;filter:blur(100px);opacity:.1
+}
+.hero-bg .orb:nth-child(1){
+  width:600px;height:600px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  top:-20%;left:-15%;
+  animation:orbFloat 14s ease-in-out infinite
+}
+.hero-bg .orb:nth-child(2){
+  width:450px;height:450px;
+  background:radial-gradient(circle,var(--purple),transparent 70%);
+  bottom:-15%;right:-10%;
+  animation:orbFloat 18s ease-in-out infinite 3s
+}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(40px,-50px) scale(1.1)}
+  66%{transform:translate(-30px,30px) scale(.92)}
+}
+.hero .dot-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(110,193,228,.06) 1px,transparent 1px);
+  background-size:48px 48px;opacity:.5
+}
+.hero h1{
+  font-size:clamp(36px,5.5vw,64px);font-weight:900;
+  line-height:1.08;max-width:900px;position:relative;z-index:1;
+  font-family:var(--font-body);letter-spacing:-1px
+}
+.hero h1 span{
+  background:linear-gradient(135deg,var(--accent),var(--purple),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200% 200%;animation:gradientShift 6s ease-in-out infinite
+}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero .subtitle{
+  font-family:var(--font-display);font-style:italic;
+  font-size:1.05rem;color:var(--text2);margin-top:.25rem;opacity:.65
+}
+.hero p{
+  font-size:clamp(15px,1.8vw,20px);color:var(--text2);
+  max-width:680px;margin-top:20px;position:relative;z-index:1
+}
+.hero-badges{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-top:32px;justify-content:center;position:relative;z-index:1
+}
+.hero-badges span{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px 6px 10px;border-radius:100px;
+  font-size:11px;font-weight:600;font-family:var(--font);
+  text-transform:uppercase;letter-spacing:.5px;
+  border:1px solid var(--border);background:rgba(255,255,255,.015)
+}
+.hero-badges .live{border-color:rgba(52,211,153,.25);color:var(--green);background:rgba(52,211,153,.04)}
+.hero-badges .agent{border-color:rgba(110,193,228,.25);color:var(--accent);background:rgba(110,193,228,.04)}
+.hero-badges .phone{border-color:rgba(251,191,36,.2);color:var(--orange);background:rgba(251,191,36,.03)}
+.hero .scroll-indicator{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  color:var(--text2);font-size:20px;
+  animation:bounce 2.5s infinite;z-index:1;opacity:.5
+}
+@keyframes bounce{
+  0%,20%,50%,80%,100%{transform:translateX(-50%) translateY(0)}
+  40%{transform:translateX(-50%) translateY(-8px)}
+  60%{transform:translateX(-50%) translateY(-4px)}
+}
 
 /* Sections */
-section{padding:80px 24px;max-width:1100px;margin:0 auto}
-section h2{font-size:clamp(28px,3.5vw,42px);font-weight:700;margin-bottom:12px;line-height:1.2}
+section{padding:88px 24px;max-width:1100px;margin:0 auto}
+section h2{
+  font-size:clamp(30px,3.5vw,44px);font-weight:800;
+  margin-bottom:10px;line-height:1.15;letter-spacing:-.5px
+}
 section h2 span{color:var(--accent)}
-section .sub{color:var(--text2);font-size:16px;max-width:700px;margin-bottom:48px}
-.section-label{display:inline-block;padding:4px 12px;border-radius:100px;font-size:10px;font-weight:600;font-family:var(--font);text-transform:uppercase;letter-spacing:1px;border:1px solid rgba(110,193,228,.2);color:var(--accent);background:rgba(110,193,228,.06);margin-bottom:12px}
+section .sub{color:var(--text2);font-size:16px;max-width:700px;margin-bottom:44px}
+.section-label{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:100px;font-size:10px;
+  font-weight:600;font-family:var(--font);text-transform:uppercase;
+  letter-spacing:1px;
+  border:1px solid rgba(110,193,228,.15);color:var(--accent);
+  background:rgba(110,193,228,.04);margin-bottom:12px
+}
+
+/* Wave divider */
+.wave-divider{
+  position:relative;height:48px;overflow:hidden;
+  display:flex;align-items:flex-end;justify-content:center;
+  margin:-24px auto 0;max-width:100%
+}
+.wave-divider svg{width:100%;height:32px;opacity:.15}
+.wave-divider svg path{fill:none;stroke:var(--accent);stroke-width:.5}
 
 /* Cards */
-.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-.card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:28px;transition:all .3s}
-.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(110,193,228,.08)}
-.card .icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
-.card h3{font-size:16px;font-weight:600;margin-bottom:8px}
-.card p{font-size:14px;color:var(--text2);line-height:1.6}
+.card-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px
+}
+.card-grid .card:first-child:nth-last-child(3),
+.card-grid .card:first-child:nth-last-child(3) ~ .card{
+  /* 3 cards: make middle wider if layout allows */
+}
+.card{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  transition:all .35s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(110,193,228,.02),transparent 60%);
+  pointer-events:none;opacity:0;transition:opacity .35s
+}
+.card:hover{
+  border-color:rgba(110,193,228,.3);
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(110,193,228,.06)
+}
+.card:hover::before{opacity:1}
+.card .icon-wrap{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+  transition:all .3s;position:relative;z-index:1
+}
+.card:hover .icon-wrap{transform:scale(1.05)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:6px;position:relative;z-index:1}
+.card p{font-size:13.5px;color:var(--text2);line-height:1.65;position:relative;z-index:1}
 
 /* Two column */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px}
 @media(max-width:768px){.two-col{grid-template-columns:1fr}}
 
 /* Comparison Table */
-.comp-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:32px}
-.comp-table thead{background:rgba(110,193,228,.04)}
-.comp-table th{padding:14px 16px;text-align:left;font-family:var(--font);font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border)}
-.comp-table td{padding:12px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text2)}
-.comp-table td:first-child{color:var(--text);font-weight:500}
-.comp-table .yes{color:var(--green)}
-.comp-table .no{color:var(--red)}
-.comp-table .partial{color:var(--orange)}
-.table-wrapper{overflow-x:auto;border:1px solid var(--border);border-radius:16px;background:var(--bg3)}
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table thead{background:rgba(110,193,228,.03)}
+.comp-table th{
+  padding:14px 16px;text-align:left;
+  font-family:var(--font);font-size:10px;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--accent);font-weight:600;
+  border-bottom:1px solid var(--border)
+}
+.comp-table td{
+  padding:12px 16px;text-align:left;
+  border-bottom:1px solid rgba(255,255,255,.025);color:var(--text2)
+}
+.comp-table td:first-child{color:var(--text);font-weight:500;white-space:nowrap}
+.comp-table .yes i{color:var(--green)}
+.comp-table .no i{color:var(--red)}
+.comp-table .partial i{color:var(--orange)}
+.table-wrapper{
+  overflow-x:auto;
+  border:1px solid var(--border);border-radius:16px;
+  background:var(--bg3)
+}
 .table-wrapper table{margin:0}
 
 /* Callout */
-.callout{padding:18px 20px;border-radius:12px;margin:20px 0;border-left:3px solid;font-size:14px}
-.callout.info{background:rgba(110,193,228,.06);border-color:var(--accent)}
-.callout.info strong{color:var(--accent)}
-.callout.success{background:rgba(52,211,153,.06);border-color:var(--green)}
-.callout.success strong{color:var(--green)}
-.callout.warn{background:rgba(251,191,36,.06);border-color:var(--orange)}
-.callout.warn strong{color:var(--orange)}
+.callout{
+  padding:18px 20px;border-radius:12px;margin:20px 0;
+  border-left:3px solid;font-size:14px;
+  display:flex;align-items:flex-start;gap:10px
+}
+.callout i{flex-shrink:0;font-size:18px;margin-top:1px}
+.callout.info{background:rgba(110,193,228,.05);border-color:var(--accent)}
+.callout.info i{color:var(--accent)}
+.callout.success{background:rgba(52,211,153,.05);border-color:var(--green)}
+.callout.success i{color:var(--green)}
+.callout.warn{background:rgba(251,191,36,.04);border-color:var(--orange)}
+.callout.warn i{color:var(--orange)}
 
 /* Timeline */
 .timeline{position:relative;padding-left:60px}
-.timeline::before{content:'';position:absolute;left:20px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--accent),rgba(110,193,228,.2))}
-.tl-item{position:relative;margin-bottom:32px;padding-left:24px;opacity:0;animation:tlFade .6s ease-out forwards}
-.tl-item:nth-child(1){animation-delay:.1s}.tl-item:nth-child(2){animation-delay:.2s}.tl-item:nth-child(3){animation-delay:.3s}
-.tl-item:nth-child(4){animation-delay:.4s}.tl-item:nth-child(5){animation-delay:.5s}
-@keyframes tlFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.tl-item::before{content:'';position:absolute;left:-29px;top:6px;width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);z-index:1}
+.timeline::before{
+  content:'';position:absolute;left:20px;top:8px;bottom:8px;
+  width:2px;background:linear-gradient(180deg,var(--accent),rgba(110,193,228,.1))
+}
+.tl-item{position:relative;margin-bottom:32px;padding-left:24px}
+.tl-item::before{
+  content:'';position:absolute;left:-29px;top:6px;
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--accent);background:var(--bg);z-index:1;
+  transition:all .3s
+}
+.tl-item:hover::before{background:var(--accent);box-shadow:0 0 16px rgba(110,193,228,.3)}
 .tl-item .tl-title{font-weight:600;font-size:15px;margin-bottom:4px}
 .tl-item .tl-desc{font-size:13px;color:var(--text2)}
 
 /* Highlight bar */
-.highlight-bar{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.highlight-bar{
+  background:var(--bg3);
+  border:1px solid var(--border);border-radius:16px;
+  padding:24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  transition:all .3s
+}
+.highlight-bar:hover{border-color:rgba(110,193,228,.2)}
 .highlight-bar + .highlight-bar{margin-top:12px}
-.highlight-bar .big{font-size:28px;font-weight:800;color:var(--accent);flex-shrink:0}
+.highlight-bar .big{font-size:28px;flex-shrink:0;display:flex;align-items:center}
+.highlight-bar .big i{font-size:28px;color:var(--accent)}
 .highlight-bar p{font-size:14px;color:var(--text2);flex:1}
-
-/* Divider */
-.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);max-width:600px;margin:0 auto;border:none}
 
 /* Footer */
 footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);margin-top:40px}
@@ -119,62 +299,112 @@ footer p{color:var(--text2);font-size:12px;font-family:var(--font)}
 footer a{color:var(--accent);text-decoration:none}
 
 /* Quote block */
-.quote-block{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:32px;margin:24px 0;position:relative}
-.quote-block::before{content:'"';font-size:48px;color:var(--accent);opacity:.3;position:absolute;top:16px;left:20px;font-family:serif}
-.quote-block p{font-size:15px;font-style:italic;color:var(--text);padding-left:24px}
-.quote-block .attribution{font-size:12px;color:var(--text2);margin-top:12px;padding-left:24px;font-style:normal}
+.quote-block{
+  background:var(--bg3);border:1px solid var(--border);border-radius:16px;
+  padding:32px;margin:24px 0;position:relative
+}
+.quote-block i.quote-mark{
+  font-size:32px;color:var(--accent);opacity:.15;
+  position:absolute;top:16px;left:20px
+}
+.quote-block p{
+  font-size:15px;font-style:italic;color:var(--text);
+  padding-left:24px;font-family:var(--font-display)
+}
+.quote-block .attribution{
+  font-size:12px;color:var(--text2);margin-top:12px;
+  padding-left:24px;font-style:normal
+}
 
-/* Meta badge */
-.meta-card{text-align:center;padding:60px 24px}
-.meta-card .big-icon{font-size:64px;margin-bottom:16px}
-.meta-card h2{font-size:32px}
-.meta-card p{color:var(--text2);max-width:600px;margin:12px auto 0}
+/* Numbered list large */
+.num-list{counter-reset:step}
+.num-item{
+  counter-increment:step;display:flex;gap:20px;
+  margin-bottom:24px;align-items:flex-start
+}
+.num-item .num{
+  flex-shrink:0;width:36px;height:36px;border-radius:50%;
+  background:rgba(110,193,228,.1);border:1px solid rgba(110,193,228,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:14px;color:var(--accent);font-family:var(--font)
+}
+.num-item .content h4{font-size:15px;font-weight:600;margin-bottom:2px}
+.num-item .content p{font-size:13px;color:var(--text2)}
+
+/* Skills demo */
+.skill-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.skill-tag{
+  padding:4px 12px;border-radius:100px;
+  font-size:10px;font-family:var(--font);font-weight:500;
+  border:1px solid var(--border);background:rgba(255,255,255,.015);
+  color:var(--text2);transition:all .2s
+}
+.skill-tag:hover{
+  border-color:rgba(110,193,228,.3);color:var(--accent);
+  background:rgba(110,193,228,.03);transform:translateY(-1px)
+}
+
+/* Tag badge */
+.tag{
+  display:inline-block;padding:2px 10px;border-radius:100px;
+  font-size:9px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;font-family:var(--font);
+  margin-left:6px;vertical-align:middle
+}
+.tag.best{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.25)}
+.tag.good{background:rgba(110,193,228,.1);color:var(--accent);border:1px solid rgba(110,193,228,.2)}
+.tag.fast{background:rgba(251,191,36,.08);color:var(--orange);border:1px solid rgba(251,191,36,.15)}
+.tag.light{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.15)}
+
+/* Inline code */
+code{
+  background:rgba(110,193,228,.06);padding:2px 6px;border-radius:4px;
+  font-size:13px;color:var(--accent);font-family:var(--font)
+}
+
+/* CTA button */
+.cta-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 36px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border-radius:12px;text-decoration:none;
+  font-weight:600;font-size:15px;
+  transition:all .3s cubic-bezier(.22,1,.36,1);
+  box-shadow:0 4px 20px rgba(110,193,228,.15)
+}
+.cta-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(110,193,228,.25)
+}
 
 /* Responsive */
 @media(max-width:768px){
   nav{padding:0 16px}
-  nav .links{display:none;position:absolute;top:64px;left:0;right:0;background:rgba(13,13,48,.98);flex-direction:column;padding:16px;border-bottom:1px solid var(--border)}
+  nav .links{
+    display:none;position:absolute;top:64px;left:0;right:0;
+    background:rgba(11,11,32,.98);
+    flex-direction:column;padding:16px;
+    border-bottom:1px solid var(--border)
+  }
   nav .links.open{display:flex}
-  .nav-toggle{display:block}
+  nav .links a::after{display:none}
+  .nav-toggle{display:flex;align-items:center;justify-content:center}
   .card-grid{grid-template-columns:1fr}
   section{padding:60px 16px}
   .comp-table{font-size:11px}
   .comp-table th,.comp-table td{padding:10px 8px}
   .highlight-bar{flex-direction:column;text-align:center}
 }
-
-/* Alternating section bg */
-section.bg-alt{background:var(--bg2);max-width:100%;padding:80px calc((100vw - 1100px)/2 + 24px)}
-section.bg-alt .inner{max-width:1100px;margin:0 auto}
-
-/* Numbered list large */
-.num-list{counter-reset:step}
-.num-item{counter-increment:step;display:flex;gap:20px;margin-bottom:24px;align-items:flex-start}
-.num-item .num{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:rgba(110,193,228,.12);border:1px solid rgba(110,193,228,.2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--accent);font-family:var(--font)}
-.num-item .content h4{font-size:15px;font-weight:600;margin-bottom:2px}
-.num-item .content p{font-size:13px;color:var(--text2)}
-
-/* Skills demo */
-.skill-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
-.skill-tag{padding:5px 14px;border-radius:100px;font-size:11px;font-family:var(--font);font-weight:500;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text2);transition:all .2s}
-.skill-tag:hover{border-color:var(--accent);color:var(--accent);background:rgba(110,193,228,.04);transform:translateY(-1px)}
-
-/* Tag badge */
-.tag{display:inline-block;padding:2px 10px;border-radius:100px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-family:var(--font);margin-left:6px;vertical-align:middle}
-.tag.best{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
-.tag.good{background:rgba(110,193,228,.12);color:var(--accent);border:1px solid rgba(110,193,228,.2)}
-.tag.fast{background:rgba(251,191,36,.1);color:var(--orange);border:1px solid rgba(251,191,36,.2)}
-.tag.light{background:rgba(167,139,250,.12);color:var(--accent2);border:1px solid rgba(167,139,250,.2)}
-
-/* Inline code */
-code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-size:13px;color:var(--accent);font-family:var(--font)}
+@media(min-width:900px){
+  .card-grid.wide-first .card:first-child{grid-column:span 2}
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">Local AI</div>
-  <button class="nav-toggle" aria-label="Menu">☰</button>
+  <div class="logo"><i class="ph ph-robot"></i> Local AI</div>
+  <button class="nav-toggle" aria-label="Menu"><i class="ph ph-list"></i></button>
   <div class="links">
     <a href="#motivation">Why Local</a>
     <a href="#agent">AI vs Agent</a>
@@ -189,83 +419,94 @@ code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-siz
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
   <div class="hero-bg"><div class="orb"></div><div class="orb"></div></div>
+  <div class="dot-grid"></div>
   <h1>Local AI for <span>Engineering Firms</span></h1>
-              <p class="hero-subtitle" style="margin-top: 0.25rem; font-size: 1.1rem; opacity: 0.7;">By Omar J.</p>
+  <div class="subtitle">— By Omar J. —</div>
   <p>Hermes Agent — an autonomous, open-source engineering assistant that runs on your hardware, not someone else's cloud.</p>
   <div class="hero-badges">
-    <span class="live">● Open Source</span>
-    <span class="agent">Self-Hosted</span>
-    <span class="phone">Phone-Controlled</span>
-    <span class="agent">Skill-Based</span>
+    <span class="live"><i class="ph ph-circle-fill" style="font-size:6px;color:var(--green)"></i> Open Source</span>
+    <span class="agent"><i class="ph ph-server"></i> Self-Hosted</span>
+    <span class="phone"><i class="ph ph-device-mobile"></i> Phone-Controlled</span>
+    <span class="agent"><i class="ph ph-sliders"></i> Skill-Based</span>
   </div>
-  <div class="scroll-down">Scroll</div>
+  <div class="scroll-indicator"><i class="ph ph-arrow-down"></i></div>
 </section>
 
 <!-- ============ MOTIVATION ============ -->
 <section id="motivation">
-  <span class="section-label">Part I — The Why</span>
+  <span class="section-label"><i class="ph ph-question"></i> Part I — The Why</span>
   <h2>Why Run AI <span>On-Premise?</span></h2>
   <p class="sub">Engineering firms handle proprietary designs, client data, and internal blueprints. Sending that to a third-party API introduces risk — here is why local matters.</p>
 
-  <div class="card-grid">
+  <div class="card-grid wide-first">
     <div class="card">
-      <div class="icon" style="background:rgba(110,193,228,.12)">🔒</div>
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-lock-key" style="color:var(--accent);font-size:22px"></i></div>
       <h3>Data Privacy</h3>
       <p>Every prompt, every file, every design stays on your machine. No data leaves your network — no third-party API sees your proprietary blueprints or client contracts.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(52,211,153,.12)">💰</div>
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-coin" style="color:var(--green);font-size:22px"></i></div>
       <h3>Cost Control</h3>
       <p>One hardware investment. No per-token bills, no surprise invoices at the end of the month. Unlimited usage for the same fixed cost.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(251,191,36,.12)">🔌</div>
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-plug" style="color:var(--orange);font-size:22px"></i></div>
       <h3>Offline Capable</h3>
       <p>No internet dependency. Works in air-gapped environments, server rooms, or field offices with no cloud access.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(167,139,250,.12)">🎛️</div>
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-sliders-horizontal" style="color:var(--purple);font-size:22px"></i></div>
       <h3>Full Control</h3>
       <p>Choose your model, tune your parameters, swap providers on the fly. No vendor lock-in, no forced deprecations, no rate limits.</p>
     </div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q60,32 120,16 T240,16 T360,16 T480,16 T600,16 T720,16 T840,16 T960,16 T1080,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ AI vs AGENT ============ -->
 <section id="agent">
-  <span class="section-label">Part II — The Technology</span>
+  <span class="section-label"><i class="ph ph-arrows-split"></i> Part II — The Technology</span>
   <h2>AI Chatbot vs <span>AI Agent</span></h2>
   <p class="sub">There is a fundamental difference between asking a chatbot a question and having an autonomous agent execute work for you.</p>
 
   <div class="two-col">
-    <div class="card" style="border-color:rgba(248,113,113,.2)">
-      <div class="icon" style="background:rgba(248,113,113,.12)">💬</div>
+    <div class="card" style="border-color:rgba(248,113,113,.15);background:rgba(248,113,113,.02)">
+      <div class="icon-wrap" style="background:rgba(248,113,113,.1)"><i class="ph ph-chat-dots" style="color:var(--red);font-size:22px"></i></div>
       <h3>Traditional AI Chatbot</h3>
       <p>Answer one question at a time. No access to your files, no ability to run code, no memory of past sessions. Passive — you do all the work, it just suggests.</p>
     </div>
-    <div class="card" style="border-color:rgba(52,211,153,.2)">
-      <div class="icon" style="background:rgba(52,211,153,.12)">🤖</div>
+    <div class="card" style="border-color:rgba(52,211,153,.15);background:rgba(52,211,153,.02)">
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-robot" style="color:var(--green);font-size:22px"></i></div>
       <h3>Hermes Agent</h3>
       <p>Autonomous. Opens files, runs commands, pushes to GitHub, manages Cloudflare tunnels, deploys sites — all from a single instruction. Active — it does the work while you supervise.</p>
     </div>
   </div>
 
   <div class="callout info">
-    <strong>🔑 Key distinction:</strong> A chatbot tells you what to do. An agent <em>does</em> it. Hermes can be given a task like "deploy this site behind a password" and it will configure the server, set up the tunnel, and verify access — all without further input.
+    <i class="ph ph-key"></i>
+    <div><strong>Key distinction:</strong> A chatbot tells you what to do. An agent <em>does</em> it. Hermes can be given a task like "deploy this site behind a password" and it will configure the server, set up the tunnel, and verify access — all without further input.</div>
   </div>
 
   <div class="callout success">
-    <strong>🤖 Agent capabilities:</strong> File system access · Terminal execution · GitHub operations · Cloudflare tunnel management · Web browsing · Cron scheduling · Persistent memory across sessions · A growing skill library trained on your workflows
+    <i class="ph ph-gear-six"></i>
+    <div><strong>Agent capabilities:</strong> File system access · Terminal execution · GitHub operations · Cloudflare tunnel management · Web browsing · Cron scheduling · Persistent memory across sessions · A growing skill library trained on your workflows</div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q100,0 200,16 T400,16 T600,16 T800,16 T1000,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ COMPARISON ============ -->
 <section id="comparison">
-  <span class="section-label">Part III — The Landscape</span>
+  <span class="section-label"><i class="ph ph-squares-four"></i> Part III — The Landscape</span>
   <h2>Local vs Cloud API vs <span>Copilot</span></h2>
   <p class="sub">A practical comparison across the dimensions that matter for engineering firms.</p>
 
@@ -275,32 +516,38 @@ code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-siz
         <tr><th>Dimension</th><th>Local (Hermes + Local Model)</th><th>Cloud API (OpenAI/Anthropic)</th><th>GitHub Copilot</th></tr>
       </thead>
       <tbody>
-        <tr><td>Data Privacy</td><td>✅ <span class="yes">Your data, your hardware</span></td><td>❌ <span class="no">Sent to third-party servers</span></td><td>⚠️ <span class="partial">Code sent to Microsoft/GitHub</span></td></tr>
-        <tr><td>Offline</td><td>✅ <span class="yes">Full offline capability</span></td><td>❌ <span class="no">Requires internet</span></td><td>⚠️ <span class="partial">Limited cache mode</span></td></tr>
-        <tr><td>Cost Model</td><td>✅ <span class="yes">One-time hardware</span></td><td>⚠️ <span class="partial">Per-token billing (~$0.15/M tok)</span></td><td>⚠️ <span class="partial">$19-39/user/month + API limits</span></td></tr>
-        <tr><td>Full Oversight</td><td>✅ <span class="yes">Complete audit trail</span></td><td>❌ <span class="no">Limited logging</span></td><td>❌ <span class="no">Minimal transparency</span></td></tr>
-        <tr><td>Tool Access</td><td>✅ <span class="yes">Terminal, files, web, GitHub, Cloudflare, cron</span></td><td>⚠️ <span class="partial">Function calling only</span></td><td>❌ <span class="no">IDE only</span></td></tr>
-        <tr><td>Model Choice</td><td>✅ <span class="yes">Any model, any time</span></td><td>⚠️ <span class="partial">Provider-dependent</span></td><td>❌ <span class="no">Locked to their model</span></td></tr>
-        <tr><td>Latency</td><td>⚠️ <span class="partial">Hardware-dependent (5-160 tok/s)</span></td><td>✅ <span class="yes">Fast, server-grade</span></td><td>✅ <span class="yes">Fast, inline</span></td></tr>
+        <tr><td>Data Privacy</td><td><span class="yes"><i class="ph ph-check-circle"></i> Your data, your hardware</span></td><td><span class="no"><i class="ph ph-x-circle"></i> Sent to third-party servers</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> Code sent to Microsoft/GitHub</span></td></tr>
+        <tr><td>Offline</td><td><span class="yes"><i class="ph ph-check-circle"></i> Full offline capability</span></td><td><span class="no"><i class="ph ph-x-circle"></i> Requires internet</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> Limited cache mode</span></td></tr>
+        <tr><td>Cost Model</td><td><span class="yes"><i class="ph ph-check-circle"></i> One-time hardware</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> Per-token billing (~$0.15/M tok)</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> $19-39/user/month + API limits</span></td></tr>
+        <tr><td>Full Oversight</td><td><span class="yes"><i class="ph ph-check-circle"></i> Complete audit trail</span></td><td><span class="no"><i class="ph ph-x-circle"></i> Limited logging</span></td><td><span class="no"><i class="ph ph-x-circle"></i> Minimal transparency</span></td></tr>
+        <tr><td>Tool Access</td><td><span class="yes"><i class="ph ph-check-circle"></i> Terminal, files, web, GitHub, Cloudflare, cron</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> Function calling only</span></td><td><span class="no"><i class="ph ph-x-circle"></i> IDE only</span></td></tr>
+        <tr><td>Model Choice</td><td><span class="yes"><i class="ph ph-check-circle"></i> Any model, any time</span></td><td><span class="partial"><i class="ph ph-warning-circle"></i> Provider-dependent</span></td><td><span class="no"><i class="ph ph-x-circle"></i> Locked to their model</span></td></tr>
+        <tr><td>Latency</td><td><span class="partial"><i class="ph ph-warning-circle"></i> Hardware-dependent (5-160 tok/s)</span></td><td><span class="yes"><i class="ph ph-check-circle"></i> Fast, server-grade</span></td><td><span class="yes"><i class="ph ph-check-circle"></i> Fast, inline</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="callout warn">
-    <strong>📊 The trade-off:</strong> Local AI trades raw speed for <em>privacy, control, and unlimited usage</em>. For engineering work where data sensitivity matters more than response time, local is the clear winner.
+    <i class="ph ph-chart-bar"></i>
+    <div><strong>The trade-off:</strong> Local AI trades raw speed for <em>privacy, control, and unlimited usage</em>. For engineering work where data sensitivity matters more than response time, local is the clear winner.</div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,32 Q60,0 120,16 T240,32 T360,16 T480,32 T600,16 T720,32 T840,16 T960,32 T1080,16 T1200,32" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ MODELS ============ -->
 <section id="models">
-  <span class="section-label">Part IV — The Models</span>
+  <span class="section-label"><i class="ph ph-cube"></i> Part IV — The Models</span>
   <h2>Which Models <span>to Run</span></h2>
   <p class="sub">The full local AI stack includes a primary model for heavy lifting and a fleet of smaller models for speed-critical tasks — all running on the same hardware.</p>
 
   <div class="callout info">
-    <strong>🎯 Model routing is the secret:</strong> Route quick edits and simple queries to a tiny 3B model that responds in milliseconds. Route complex reasoning, code review, and multi-step tasks to a larger model. Hermes handles the routing automatically.
+    <i class="ph ph-faders"></i>
+    <div><strong>Model routing is the secret:</strong> Route quick edits and simple queries to a tiny 3B model that responds in milliseconds. Route complex reasoning, code review, and multi-step tasks to a larger model. Hermes handles the routing automatically.</div>
   </div>
 
   <div class="table-wrapper" style="margin-bottom:32px">
@@ -321,247 +568,271 @@ code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-siz
     </table>
   </div>
 
-  <h3 style="font-size:15px;margin-bottom:16px;color:var(--text2)">Recommended Fleets by Hardware</h3>
+  <h3 style="font-size:14px;margin-bottom:16px;color:var(--text2);font-weight:500">Recommended Fleets by Hardware</h3>
 
   <div class="card-grid">
     <div class="card">
-      <div class="icon" style="background:rgba(110,193,228,.12)">💻</div>
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-laptop" style="color:var(--accent);font-size:22px"></i></div>
       <h3>24 GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(RTX 3090/4090)</span></h3>
       <p><strong style="color:var(--accent)">Lead:</strong> Gemma 4 12B</p>
       <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 E4B (4.5B)</p>
       <p><strong style="color:var(--accent)">Ultra:</strong> Llama 3.2 3B</p>
-      <p style="margin-top:8px;font-size:12px">Covers 85% of daily use. No additional GPU needed.</p>
+      <p style="margin-top:8px;font-size:12px;color:var(--green)"><i class="ph ph-check" style="font-size:12px"></i> Covers 85% of daily use. No additional GPU needed.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(52,211,153,.12)">🖥️</div>
-      <h3>48 GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(2× RTX 3090 / A6000)</span></h3>
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-desktop" style="color:var(--green);font-size:22px"></i></div>
+      <h3>48 GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(2x RTX 3090 / A6000)</span></h3>
       <p><strong style="color:var(--accent)">Lead:</strong> Gemma 4 31B or MiniMax M3 (Q2)</p>
       <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 12B</p>
       <p><strong style="color:var(--accent)">Ultra:</strong> Llama 3.2 3B</p>
-      <p style="margin-top:8px;font-size:12px">Full reasoning + high-speed routing in one box.</p>
+      <p style="margin-top:8px;font-size:12px;color:var(--green)"><i class="ph ph-check" style="font-size:12px"></i> Full reasoning + high-speed routing in one box.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(251,191,36,.12)">🏢</div>
-      <h3>96+ GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(4× GPU / A100)</span></h3>
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-buildings" style="color:var(--orange);font-size:22px"></i></div>
+      <h3>96+ GB VRAM <span style="font-weight:400;color:var(--text2);font-size:12px">(4x GPU / A100)</span></h3>
       <p><strong style="color:var(--accent)">Lead:</strong> MiniMax M3 (Q4_K_M)</p>
       <p><strong style="color:var(--accent)">Fast:</strong> Gemma 4 26B A4B</p>
       <p><strong style="color:var(--accent)">Local:</strong> Gemma 4 31B (always-on)</p>
-      <p style="margin-top:8px;font-size:12px">Multi-user, 1M context, enterprise throughput.</p>
+      <p style="margin-top:8px;font-size:12px;color:var(--green)"><i class="ph ph-check" style="font-size:12px"></i> Multi-user, 1M context, enterprise throughput.</p>
     </div>
   </div>
 
   <div class="highlight-bar" style="margin-top:28px">
-    <span class="big">🧠</span>
+    <span class="big"><i class="ph ph-brain"></i></span>
     <p><strong>Skills amplify cheap models.</strong> A well-crafted skill turns a tiny 3B model into a domain expert. Hermes crams task-specific instructions, guardrails, and structured prompts into a skill — so even a <strong>$0 hardware</strong> model like Gemma 4 E2B can perform at the level of a much larger model for that specific task. <strong>The skill, not the model size, determines output quality.</strong></p>
   </div>
 
   <div class="callout success">
-    <strong>✅ Bottom line:</strong> You don't need a 428B model to run Hermes effectively. A <strong>Gemma 4 31B + E4B</strong> combo costs $0 in additional hardware if you have a 24 GB RTX 4090, and covers 95% of what an engineering firm needs. Add M3 when you need 1M context or multi-user serving. The secret isn't the biggest model — it's the <strong>right model for each task</strong>.
+    <i class="ph ph-check-circle"></i>
+    <div><strong>Bottom line:</strong> You don't need a 428B model to run Hermes effectively. A <strong>Gemma 4 31B + E4B</strong> combo costs $0 in additional hardware if you have a 24 GB RTX 4090, and covers 95% of what an engineering firm needs. Add M3 when you need 1M context or multi-user serving. The secret isn't the biggest model — it's the <strong>right model for each task</strong>.</div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q60,0 120,16 T240,16 T360,16 T480,16 T600,16 T720,16 T840,16 T960,16 T1080,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ MANAGEMENT ============ -->
-<section id="management" class="bg-alt">
-  <div class="inner">
-    <span class="section-label">Part V — For Leadership</span>
-    <h2>What Management <span>Needs to Know</span></h2>
-    <p class="sub">AI adoption without oversight is a liability. Here is how Hermes gives leadership full visibility and control.</p>
-
-    <div class="card-grid">
-      <div class="card">
-        <div class="icon" style="background:rgba(110,193,228,.12)">📋</div>
-        <h3>Full Audit Trail</h3>
-        <p>Every action is logged — every file read, command run, and deployment made. Session history is searchable and reviewable at any time.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(52,211,153,.12)">🏢</div>
-        <h3>No Data Leaves Premises</h3>
-        <p>When configured with a local model (Ollama, vLLM), zero data ever leaves your network. Compliant with IP protection and NDA requirements out of the box.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(251,191,36,.12)">🛡️</div>
-        <h3>Role-Based Control</h3>
-        <p>Granular tool permissions. Decide which team members can deploy, which can only read, and what environments the agent has access to.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(167,139,250,.12)">📈</div>
-        <h3>Cost Predictability</h3>
-        <p>One hardware investment, unlimited usage. No per-seat licenses scaling with headcount, no token bills growing with adoption.</p>
-      </div>
-    </div>
-
-    <div class="quote-block">
-      <p>You wouldn't let a new hire push to production without oversight. Why treat an AI agent any differently? Hermes gives you the same control — with better logs.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============ APPLICATIONS ============ -->
-<section id="applications">
-  <span class="section-label">Part VI — In Practice</span>
-  <h2>Beyond Software: What It <span>Actually Does</span></h2>
-  <p class="sub">Hermes isn't just a coding tool. It automates anything that can be described, scripted, or API-driven — faster than a human can do it manually.</p>
+<section id="management">
+  <span class="section-label"><i class="ph ph-shield-check"></i> Part V — For Leadership</span>
+  <h2>What Management <span>Needs to Know</span></h2>
+  <p class="sub">AI adoption without oversight is a liability. Here is how Hermes gives leadership full visibility and control.</p>
 
   <div class="card-grid">
     <div class="card">
-      <div class="icon" style="background:rgba(110,193,228,.12)">🌐</div>
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-clipboard-text" style="color:var(--accent);font-size:22px"></i></div>
+      <h3>Full Audit Trail</h3>
+      <p>Every action is logged — every file read, command run, and deployment made. Session history is searchable and reviewable at any time.</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-buildings" style="color:var(--green);font-size:22px"></i></div>
+      <h3>No Data Leaves Premises</h3>
+      <p>When configured with a local model (Ollama, vLLM), zero data ever leaves your network. Compliant with IP protection and NDA requirements out of the box.</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-shield-check" style="color:var(--orange);font-size:22px"></i></div>
+      <h3>Role-Based Control</h3>
+      <p>Granular tool permissions. Decide which team members can deploy, which can only read, and what environments the agent has access to.</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-trend-up" style="color:var(--purple);font-size:22px"></i></div>
+      <h3>Cost Predictability</h3>
+      <p>One hardware investment, unlimited usage. No per-seat licenses scaling with headcount, no token bills growing with adoption.</p>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <i class="ph ph-quotes quote-mark"></i>
+    <p>You wouldn't let a new hire push to production without oversight. Why treat an AI agent any differently? Hermes gives you the same control — with better logs.</p>
+  </div>
+</section>
+
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,32 Q100,16 200,32 T400,32 T600,32 T800,32 T1000,32 T1200,32" stroke-width="1.5"/>
+  </svg>
+</div>
+
+<!-- ============ APPLICATIONS ============ -->
+<section id="applications">
+  <span class="section-label"><i class="ph ph-globe"></i> Part VI — In Practice</span>
+  <h2>Beyond Software: What It <span>Actually Does</span></h2>
+  <p class="sub">Hermes isn't just a coding tool. It automates anything that can be described, scripted, or API-driven — faster than a human can do it manually.</p>
+
+  <div class="card-grid wide-first">
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-globe" style="color:var(--accent);font-size:22px"></i></div>
       <h3>Cloudflare Tunnel Management</h3>
       <p>"Deploy this site behind a password on our domain." Hermes configures the server, adds the ingress rule, restarts the tunnel, and verifies the password protection — all in under a minute.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(52,211,153,.12)">📦</div>
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-package" style="color:var(--green);font-size:22px"></i></div>
       <h3>GitHub & Version Control</h3>
       <p>Full git lifecycle: commit, push, pull request, merge, tag releases, deploy previews. All from a single Telegram message — no terminal needed.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(251,191,36,.12)">📱</div>
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-device-mobile" style="color:var(--orange);font-size:22px"></i></div>
       <h3>Full-Stack Development Even From Phone</h3>
       <p>Build a complete web app start-to-finish without opening a terminal. Hermes creates the project, writes the code, runs tests, pushes to GitHub, deploys to production — all via Telegram from your phone.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(167,139,250,.12)">📊</div>
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-chart-bar" style="color:var(--purple);font-size:22px"></i></div>
       <h3>Excel Automation & Data Work</h3>
       <p>"Search this Excel file for all entries from last quarter and generate a summary report." Hermes opens the file, filters, processes, and delivers the result — on a cron schedule if needed.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(110,193,228,.12)">🔌</div>
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-plug" style="color:var(--accent);font-size:22px"></i></div>
       <h3>API Integration (Fast)</h3>
       <p>Hermes interacts with any application that has an API — CRMs, ERPs, monitoring tools, firmware interfaces — <strong>faster than a human</strong> because it reads the API docs, constructs the calls, and processes responses in real-time.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(52,211,153,.12)">📄</div>
-      <h3>Documentation & Datasheets</h3>
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-file-text" style="color:var(--green);font-size:22px"></i></div>
+      <h3>Datasheets & Hardware Docs</h3>
       <p>"Read this hardware datasheet and tell me the pinout for the SPI interface." Hermes ingests PDFs, datasheets, code documentation, and technical specs — and answers questions about them instantly.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(251,191,36,.12)">🎯</div>
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-target" style="color:var(--orange);font-size:22px"></i></div>
       <h3>Project Documentation Mastery</h3>
-      <p>Hermes can absorb all documentation for an ongoing project — codebases, hardware specs, design files — and answer questions about any part of it without being told what to look at. Onboarding a new engineer? The agent already knows the project.</p>
+      <p>Hermes can absorb all documentation for an ongoing project — codebases, hardware specs, design files — and answer questions about any part without being told what to look at.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(167,139,250,.12)">📋</div>
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-clipboard" style="color:var(--purple);font-size:22px"></i></div>
       <h3>Pitch Decks & Reports</h3>
       <p>This entire pitch deck was built by Hermes — from structure to design to deployment. Reports, proposals, documentation, slide decks — all generated autonomously in your brand style.</p>
     </div>
   </div>
 
   <div class="highlight-bar">
-    <span class="big">⚡</span>
-    <p><strong>APIs make everything faster.</strong> Whether it's a CRM, a cloud provider, a monitoring dashboard, or firmware — if it has an API, Hermes can interact with it at machine speed. What takes a human 10 minutes of clicking through dashboards takes Hermes <strong>under a second</strong>.</p>
+    <span class="big"><i class="ph ph-lightning"></i></span>
+    <p><strong>APIs make everything faster.</strong> Whether it's a CRM, a cloud provider, a monitoring dashboard, or firmware — if it has an API, Hermes can interact with it at machine speed. What takes a human 10 minutes of clicking takes Hermes <strong>under a second</strong>.</p>
   </div>
 
   <div class="highlight-bar">
-    <span class="big">📱</span>
+    <span class="big"><i class="ph ph-device-mobile"></i></span>
     <p><strong>No terminal required.</strong> Send a message from your phone — Hermes executes on the server and reports back. Full engineering capability from a pocket device.</p>
   </div>
 
   <div class="highlight-bar">
-    <span class="big">⏰</span>
+    <span class="big"><i class="ph ph-clock"></i></span>
     <p><strong>Scheduled automation.</strong> Cron jobs let Hermes run tasks on a schedule — "email me the inventory report every Monday at 9 AM" or "check this API endpoint every hour and alert if it's down."</p>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q60,0 120,16 T240,16 T360,16 T480,16 T600,16 T720,16 T840,16 T960,16 T1080,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ SKILLS ============ -->
-<section id="skills" class="bg-alt">
-  <div class="inner">
-    <span class="section-label">Part VII — Continuous Improvement</span>
-    <h2>The Skills System — <span>Getting Better Over Time</span></h2>
-    <p class="sub">Hermes doesn't just follow instructions — it remembers how you work and encodes that into reusable skills. Each skill makes cheap models perform like expensive ones.</p>
+<section id="skills">
+  <span class="section-label"><i class="ph ph-books"></i> Part VII — Continuous Improvement</span>
+  <h2>The Skills System — <span>Getting Better Over Time</span></h2>
+  <p class="sub">Hermes doesn't just follow instructions — it remembers how you work and encodes that into reusable skills. Each skill makes cheap models perform like expensive ones.</p>
 
-    <div class="card-grid">
-      <div class="card">
-        <div class="icon" style="background:rgba(110,193,228,.12)">🧠</div>
-        <h3>Persistent Memory</h3>
-        <p>User preferences, project conventions, environment details — saved across sessions. Hermes remembers how you like things done without being told twice.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(52,211,153,.12)">📚</div>
-        <h3>The Skill Library</h3>
-        <p>1,000+ archived skills organized by category. Every complex workflow can be saved as a skill — from deployment procedures to audit templates to custom build scripts.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(251,191,36,.12)">🔄</div>
-        <h3>Learn Once, Use Forever</h3>
-        <p>First time doing something: Hermes figures it out. Second time: it loads the saved skill. Third time: it runs autonomously. Repetitive workflows disappear.</p>
-      </div>
-      <div class="card">
-        <div class="icon" style="background:rgba(167,139,250,.12)">💡</div>
-        <h3>Skills Amplify Cheap Models</h3>
-        <p>A well-written skill packs domain knowledge, edge cases, and structured output rules into the prompt context. This lets a <strong>3B model perform like a 30B+ model</strong> on that specific task — because the skill does the heavy thinking, the model just executes.</p>
-      </div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-brain" style="color:var(--accent);font-size:22px"></i></div>
+      <h3>Persistent Memory</h3>
+      <p>User preferences, project conventions, environment details — saved across sessions. Hermes remembers how you like things done without being told twice.</p>
     </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-books" style="color:var(--green);font-size:22px"></i></div>
+      <h3>The Skill Library</h3>
+      <p>1,000+ archived skills organized by category. Every complex workflow can be saved as a skill — from deployment procedures to audit templates to custom build scripts.</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-arrows-clockwise" style="color:var(--orange);font-size:22px"></i></div>
+      <h3>Learn Once, Use Forever</h3>
+      <p>First time doing something: Hermes figures it out. Second time: it loads the saved skill. Third time: it runs autonomously. Repetitive workflows disappear.</p>
+    </div>
+    <div class="card">
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-lightbulb" style="color:var(--purple);font-size:22px"></i></div>
+      <h3>Skills Amplify Cheap Models</h3>
+      <p>A well-written skill packs domain knowledge, edge cases, and structured output rules into the prompt context. This lets a <strong>3B model perform like a 30B+ model</strong> on that specific task — because the skill does the heavy thinking, the model just executes.</p>
+    </div>
+  </div>
 
-    <div class="callout success">
-      <strong>⚙️ Example skills in use:</strong>
-    </div>
-    <div class="skill-row">
-      <span class="skill-tag">cloudflare-tunnel-management</span>
-      <span class="skill-tag">deliverable-hosting</span>
-      <span class="skill-tag">standalone-html-deliverables</span>
-      <span class="skill-tag">opencode-coding-agent</span>
-      <span class="skill-tag">investigative-research-methods</span>
-      <span class="skill-tag">research-document-generation</span>
-      <span class="skill-tag">audio-narration-production</span>
-      <span class="skill-tag">hermes-setup-maintenance</span>
-      <span class="skill-tag">web-dev-design-resources</span>
-    </div>
+  <div class="callout success">
+    <i class="ph ph-gear"></i>
+    <div><strong>Example skills in use:</strong></div>
+  </div>
 
-    <div class="quote-block" style="margin-top:28px">
-      <p>Every time we complete a complex task — a deployment, a research report, a security audit — we save it as a skill. Next time, it's one command. The system compounds. A 3B model with a good skill beats a 70B model without one.</p>
-    </div>
+  <div class="skill-row">
+    <span class="skill-tag">cloudflare-tunnel-management</span>
+    <span class="skill-tag">deliverable-hosting</span>
+    <span class="skill-tag">standalone-html-deliverables</span>
+    <span class="skill-tag">opencode-coding-agent</span>
+    <span class="skill-tag">investigative-research-methods</span>
+    <span class="skill-tag">research-document-generation</span>
+    <span class="skill-tag">audio-narration-production</span>
+    <span class="skill-tag">hermes-setup-maintenance</span>
+    <span class="skill-tag">web-dev-design-resources</span>
+  </div>
+
+  <div class="quote-block" style="margin-top:28px">
+    <i class="ph ph-quotes quote-mark"></i>
+    <p>Every time we complete a complex task — a deployment, a research report, a security audit — we save it as a skill. Next time, it's one command. The system compounds. A 3B model with a good skill beats a 70B model without one.</p>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q60,32 120,16 T240,16 T360,16 T480,16 T600,16 T720,16 T840,16 T960,16 T1080,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ META — THIS DECK ============ -->
 <section id="meta">
-  <span class="section-label">Part VIII — Proof</span>
+  <span class="section-label"><i class="ph ph-identification-card"></i> Part VIII — Proof</span>
   <h2>This Pitch Deck Was <span>Built by Hermes</span></h2>
   <p class="sub">Every slide you are reading. Every animation. Every layout choice. All produced autonomously from a single instruction — and deployed in the same message.</p>
 
   <div class="card-grid">
     <div class="card">
-      <div class="icon" style="background:rgba(110,193,228,.12)">🎨</div>
+      <div class="icon-wrap" style="background:rgba(110,193,228,.1)"><i class="ph ph-palette" style="color:var(--accent);font-size:22px"></i></div>
       <h3>Designed From a Skill</h3>
       <p>The <code>standalone-html-deliverables</code> skill contains the full design system — NILT Navy palette, glass-morphism cards, hero orbs, responsive grid. One load, instant brand-consistent output.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(52,211,153,.12)">📝</div>
+      <div class="icon-wrap" style="background:rgba(52,211,153,.1)"><i class="ph ph-pencil-line" style="color:var(--green);font-size:22px"></i></div>
       <h3>Content Structured by Memory</h3>
       <p>Hermes knows the audience (engineering firms), the context (prior conversations about local AI), and the user's communication style. The deck reflects all of that without being told again.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(251,191,36,.12)">🚀</div>
+      <div class="icon-wrap" style="background:rgba(251,191,36,.1)"><i class="ph ph-rocket" style="color:var(--orange);font-size:22px"></i></div>
       <h3>Deployed in One Command</h3>
       <p>Built, pushed to GitHub, and deployed to Netlify — all as part of the same task. The deployment skill handles DNS, Cloudflare tunnel configuration, and password protection automatically.</p>
     </div>
     <div class="card">
-      <div class="icon" style="background:rgba(167,139,250,.12)">♻️</div>
+      <div class="icon-wrap" style="background:rgba(167,139,250,.1)"><i class="ph ph-arrows-counter-clockwise" style="color:var(--purple);font-size:22px"></i></div>
       <h3>Reusable as a Skill</h3>
       <p>This entire process — gather context, apply branding, generate HTML, deploy — is now saved as a skill. Future pitch decks will be even faster and more polished.</p>
     </div>
   </div>
 
   <div class="callout info">
-    <strong>🤖 The full chain:</strong> User sends "build a pitch deck about local AI for engineering firms" → Hermes loads the design skill → pulls relevant context from memory → generates a full HTML deck with CSS layout → saves the approach as a new skill → deploys to GitHub and Netlify → delivers the link. All autonomous.
+    <i class="ph ph-robot"></i>
+    <div><strong>The full chain:</strong> User sends "build a pitch deck about local AI for engineering firms" → Hermes loads the design skill → pulls relevant context from memory → generates a full HTML deck with CSS layout → saves the approach as a new skill → deploys to GitHub and Netlify → delivers the link. All autonomous.</div>
   </div>
 
   <div class="highlight-bar">
-    <span class="big">🎯</span>
+    <span class="big"><i class="ph ph-target"></i></span>
     <p><strong>This is not a demo of what Hermes <em>could</em> do. It's what Hermes <em>just did</em> — while you read this sentence.</strong></p>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,32 Q60,0 120,16 T240,32 T360,16 T480,32 T600,16 T720,32 T840,16 T960,32 T1080,16 T1200,32" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ HARDWARE ============ -->
 <section id="hardware">
-  <span class="section-label">Part IX — Requirements</span>
+  <span class="section-label"><i class="ph ph-cpu"></i> Part IX — Requirements</span>
   <h2>What You <span>Need to Run It</span></h2>
   <p class="sub">Hermes itself runs on modest hardware — the model determines the GPU requirement. Start with what you have.</p>
 
@@ -572,69 +843,73 @@ code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-siz
       </thead>
       <tbody>
         <tr><td>Individual</td><td>24 GB VRAM (RTX 3090/4090)</td><td>Gemma 4 12B + E4B</td><td>Single engineer, daily coding, document analysis</td></tr>
-        <tr><td>Team</td><td>48 GB VRAM (2× RTX 3090 / A6000)</td><td>Gemma 4 31B or M3 Q2</td><td>Small teams, heavy reasoning, multi-user</td></tr>
-        <tr><td>Enterprise</td><td>96+ GB VRAM (4× GPU / A100)</td><td>MiniMax M3 Q4 + Gemma 4 31B</td><td>Multi-user, 1M context, 24/7 API serving</td></tr>
+        <tr><td>Team</td><td>48 GB VRAM (2x RTX 3090 / A6000)</td><td>Gemma 4 31B or M3 Q2</td><td>Small teams, heavy reasoning, multi-user</td></tr>
+        <tr><td>Enterprise</td><td>96+ GB VRAM (4x GPU / A100)</td><td>MiniMax M3 Q4 + Gemma 4 31B</td><td>Multi-user, 1M context, 24/7 API serving</td></tr>
         <tr><td>Servers</td><td>No GPU needed (CPU-only)</td><td>Gemma 4 E2B / Llama 3.2 3B</td><td>Quick edits, git ops, automation via skills</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="callout info">
-    <strong>💡 Start small, scale up:</strong> Run Gemma 4 E4B on existing hardware today. Add GPU capacity as adoption grows. The software doesn't change — only the model name in config.yaml.
+    <i class="ph ph-lightbulb"></i>
+    <div><strong>Start small, scale up:</strong> Run Gemma 4 E4B on existing hardware today. Add GPU capacity as adoption grows. The software doesn't change — only the model name in config.yaml.</div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="wave-divider">
+  <svg viewBox="0 0 1200 32" preserveAspectRatio="none">
+    <path d="M0,16 Q60,32 120,16 T240,16 T360,16 T480,16 T600,16 T720,16 T840,16 T960,16 T1080,16 T1200,16" stroke-width="1.5"/>
+  </svg>
+</div>
 
 <!-- ============ GET STARTED ============ -->
-<section id="start" class="bg-alt">
-  <div class="inner" style="text-align:center;padding:40px 0">
-    <span class="section-label">Part X — Next Steps</span>
-    <h2>From Zero to <span>Production</span></h2>
-    <p class="sub" style="margin:12px auto 48px">One afternoon. One machine. Full local AI capability for your engineering team.</p>
+<section id="start" style="text-align:center">
+  <span class="section-label" style="margin-left:auto;margin-right:auto"><i class="ph ph-arrow-fat-line-right"></i> Part X — Next Steps</span>
+  <h2>From Zero to <span>Production</span></h2>
+  <p class="sub" style="margin:12px auto 48px;max-width:600px">One afternoon. One machine. Full local AI capability for your engineering team.</p>
 
-    <div class="num-list" style="text-align:left;max-width:600px;margin:0 auto">
-      <div class="num-item">
-        <div class="num">1</div>
-        <div class="content">
-          <h4>Install Hermes</h4>
-          <p>curl-based installer, 5 minutes, no dependencies beyond Python.</p>
-        </div>
-      </div>
-      <div class="num-item">
-        <div class="num">2</div>
-        <div class="content">
-          <h4>Pull a local model</h4>
-          <p>Ollama or vLLM — pull Gemma 4 12B or Llama 3.2 3B to start. Configure Hermes to use it.</p>
-        </div>
-      </div>
-      <div class="num-item">
-        <div class="num">3</div>
-        <div class="content">
-          <h4>Connect your tools</h4>
-          <p>GitHub, Cloudflare, Telegram, Discord, Excel, APIs — the integrations that match your workflow.</p>
-        </div>
-      </div>
-      <div class="num-item">
-        <div class="num">4</div>
-        <div class="content">
-          <h4>Run your first task</h4>
-          <p>"Deploy this app behind a Cloudflare tunnel with password protection." Watch it work.</p>
-        </div>
+  <div class="num-list" style="text-align:left;max-width:560px;margin:0 auto">
+    <div class="num-item">
+      <div class="num">1</div>
+      <div class="content">
+        <h4>Install Hermes</h4>
+        <p>curl-based installer, 5 minutes, no dependencies beyond Python.</p>
       </div>
     </div>
-
-    <div style="margin-top:48px">
-      <a href="https://hermes-agent.nousresearch.com" target="_blank" style="display:inline-block;padding:14px 36px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;transition:all .2s">Explore Hermes Agent →</a>
+    <div class="num-item">
+      <div class="num">2</div>
+      <div class="content">
+        <h4>Pull a local model</h4>
+        <p>Ollama or vLLM — pull Gemma 4 12B or Llama 3.2 3B to start. Configure Hermes to use it.</p>
+      </div>
     </div>
-    <p style="color:var(--text2);font-size:12px;margin-top:12px;font-family:var(--font)">Open source · MIT license · Nous Research · <a href="https://ai.basednode.xyz/hermesNILT" target="_blank" style="color:var(--accent)">Full setup guide →</a></p>
+    <div class="num-item">
+      <div class="num">3</div>
+      <div class="content">
+        <h4>Connect your tools</h4>
+        <p>GitHub, Cloudflare, Telegram, Discord, Excel, APIs — the integrations that match your workflow.</p>
+      </div>
+    </div>
+    <div class="num-item">
+      <div class="num">4</div>
+      <div class="content">
+        <h4>Run your first task</h4>
+        <p>"Deploy this app behind a Cloudflare tunnel with password protection." Watch it work.</p>
+      </div>
+    </div>
   </div>
+
+  <div style="margin-top:48px">
+    <a href="https://hermes-agent.nousresearch.com" target="_blank" class="cta-btn">Explore Hermes Agent <i class="ph ph-arrow-right"></i></a>
+  </div>
+  <p style="color:var(--text2);font-size:12px;margin-top:12px;font-family:var(--font)">Open source · MIT license · Nous Research · <a href="https://ai.basednode.xyz/hermesNILT" target="_blank" style="color:var(--accent)">Full setup guide →</a></p>
 </section>
 
 <footer>
   <p>Hermes Agent by <a href="https://nousresearch.com" target="_blank">Nous Research</a> · This deck was autonomously generated and deployed from a single instruction</p>
 </footer>
 
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <script>
 (function(){
   var toggle = document.querySelector('.nav-toggle');
@@ -645,15 +920,11 @@ code{background:rgba(110,193,228,.08);padding:2px 6px;border-radius:4px;font-siz
       links.classList.toggle('open');
     });
     document.querySelectorAll('.links a').forEach(function(a){
-      a.addEventListener('click', function(){
-        links.classList.remove('open');
-      });
+      a.addEventListener('click', function(){ links.classList.remove('open'); });
     });
     document.addEventListener('click', function(e){
       var nav = document.querySelector('nav');
-      if(nav && !nav.contains(e.target)){
-        links.classList.remove('open');
-      }
+      if(nav && !nav.contains(e.target)) links.classList.remove('open');
     });
   }
 })();
